@@ -56,6 +56,33 @@ public class MainActivity extends Activity {
                 startActivity(new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)));
         root.addView(access);
 
+        Button battery = new Button(this);
+        battery.setText("Désactiver l'optimisation de batterie");
+        battery.setOnClickListener(v -> {
+            try {
+                startActivity(new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+                        android.net.Uri.parse("package:" + getPackageName())));
+            } catch (Exception e) {
+                startActivity(new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS));
+            }
+        });
+        root.addView(battery);
+
+        Button autostart = new Button(this);
+        autostart.setText("Démarrage automatique (Xiaomi / Poco)");
+        autostart.setOnClickListener(v -> {
+            try {
+                Intent i = new Intent();
+                i.setComponent(new android.content.ComponentName("com.miui.securitycenter",
+                        "com.miui.permcenter.autostart.AutoStartManagementActivity"));
+                startActivity(i);
+            } catch (Exception e) {
+                startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                        android.net.Uri.parse("package:" + getPackageName())));
+            }
+        });
+        root.addView(autostart);
+
         Switch enabled = new Switch(this);
         enabled.setText("Filtre activé");
         enabled.setTextSize(16);
