@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Desafío de memoria · Diversité</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;background:#fff;color:#3c3c3c;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:560px;margin:0 auto;padding:0 16px}
+header{border-bottom:2px solid #e5e5e5;position:sticky;top:0;background:#fff;z-index:5}
+.top{display:flex;align-items:center;justify-content:space-between;padding-top:14px;gap:10px}
+.brand{font-weight:800;font-size:20px;color:#58cc02}
+.pill{background:#fff4c2;color:#b07d00;font-weight:800;padding:6px 12px;border-radius:999px;font-size:14px;white-space:nowrap}
+.dirs{display:flex;gap:8px;padding:10px 0 12px}
+.seg{flex:1;border:2px solid #e5e5e5;background:#fff;border-radius:12px;padding:9px 8px;font:inherit;font-weight:700;color:#777;cursor:pointer;font-size:14px}
+.seg.on{border-color:#1cb0f6;color:#1cb0f6;background:#ddf4ff}
+main{padding-top:4px;padding-bottom:40px}
+.sec{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:#777;margin:22px 0 10px}
+.unit{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:#fff;border:2px solid #e5e5e5;border-bottom-width:4px;border-radius:16px;padding:12px 14px;margin-bottom:10px;cursor:pointer;font:inherit;color:inherit}
+.unit:disabled{opacity:.55;cursor:not-allowed}
+.unit.done{border-color:#58cc02;background:#f4ffe9}
+.num{flex:0 0 44px;height:44px;border-radius:50%;background:#58cc02;color:#fff;font-weight:800;display:grid;place-items:center;font-size:18px}
+.unit.locked .num{background:#e5e5e5;color:#999}
+.info{flex:1;min-width:0}
+.t{font-weight:800;display:flex;justify-content:space-between;gap:8px}
+.pts{color:#b07d00;font-size:13px;white-space:nowrap}
+.sub{font-size:13px;color:#777;margin-top:2px}
+.preview{font-size:12px;color:#aaa;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.mini{height:6px;background:#e5e5e5;border-radius:6px;margin-top:6px;overflow:hidden}
+.mini>div{height:100%;background:#58cc02;transition:width .3s}
+.btn{display:inline-block;background:#58cc02;color:#fff;border:0;border-bottom:4px solid #46a302;border-radius:14px;padding:13px 20px;font:inherit;font-weight:800;font-size:16px;cursor:pointer;text-transform:uppercase;letter-spacing:.02em}
+.btn:disabled{background:#e5e5e5;border-bottom-color:#d0d0d0;color:#aaa;cursor:not-allowed}
+.btn.ghost{background:#fff;color:#1cb0f6;border:2px solid #e5e5e5;border-bottom-width:4px}
+.btn.wide{width:100%;margin-top:18px}
+.link{background:none;border:0;color:#999;text-decoration:underline;cursor:pointer;font:inherit;font-size:13px;padding:8px}
+.reset{text-align:center;margin:12px 0 0}
+.lesson-top{display:flex;align-items:center;gap:14px;padding-top:16px}
+.x{background:none;border:0;font-size:20px;color:#aaa;cursor:pointer;padding:4px;font:inherit}
+.bar{flex:1;height:14px;background:#e5e5e5;border-radius:99px;overflow:hidden}
+.bar>div{height:100%;background:#58cc02;border-radius:99px;transition:width .3s}
+.card{margin-top:28px;min-height:240px}
+.label{color:#777;font-weight:700;margin:0 0 8px}
+.prompt{font-size:26px;font-weight:800;margin-bottom:22px;overflow-wrap:anywhere}
+.opts{display:grid;gap:10px}
+.opt{text-align:left;background:#fff;border:2px solid #e5e5e5;border-bottom-width:4px;border-radius:16px;padding:14px 16px;font:inherit;font-size:17px;font-weight:700;color:#3c3c3c;cursor:pointer}
+.opt:hover:not(:disabled){background:#f7f7f7}
+.opt:disabled{cursor:default}
+.opt.right{background:#d7ffb8;border-color:#58cc02;color:#2b7a00}
+.opt.wrong{background:#ffdfdf;border-color:#ea2b2b;color:#c01c1c}
+.ans{width:100%;font:inherit;font-size:20px;padding:14px 16px;border:2px solid #e5e5e5;border-bottom-width:4px;border-radius:16px;outline:none}
+.ans:focus{border-color:#1cb0f6}
+.ans:disabled{color:#3c3c3c;opacity:1}
+.ans.right{border-color:#58cc02;background:#d7ffb8}
+.ans.wrong{border-color:#ea2b2b;background:#ffdfdf}
+.foot{margin:28px -16px 0;padding:16px;border-top:2px solid #e5e5e5;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:88px}
+.foot.good{background:#d7ffb8;border-top-color:#d7ffb8}
+.foot.bad{background:#ffdfdf;border-top-color:#ffdfdf}
+.foot .msg{font-weight:800;font-size:16px;flex:1}
+.foot.good .msg{color:#2b7a00}
+.foot.bad .msg{color:#c01c1c}
+.muted{color:#777}
+.finish{text-align:center;padding-top:30px}
+.finish h2{margin:10px 0 6px}
+.trophy{font-size:40px;color:#ffc800;letter-spacing:6px}
+.big{font-size:32px;font-weight:800;color:#b07d00;margin:6px 0}
+.row{display:flex;gap:10px;justify-content:center;margin-top:24px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">Desafío de memoria</div>
+      <div class="pill" id="score"></div>
+    </div>
+    <div class="dirs" id="dirs"></div>
+  </div>
+</header>
+<main class="wrap" id="app"></main>
+
+<script>
+/* ---------- Données : 35 mots (Diversidad e inclusión) ---------- */
+function W(id, es, fr, extra) {
+  extra = extra || {};
+  return { id: id, es: es, fr: fr, pts: id <= 16 ? 1 : 0.5, altEs: extra.altEs || [], altFr: extra.altFr || [] };
+}
+const WORDS = [
+  W(1, 'Un prejuicio', 'Un préjugé'),
+  W(2, 'El rechazo', 'Le rejet'),
+  W(3, 'La exclusión social', 'L’exclusion sociale'),
+  W(4, 'Sentirse marginado', 'Se sentir exclu'),
+  W(5, 'La autoestima', 'L’estime de soi'),
+  W(6, 'Romper estereotipos', 'Briser les stéréotypes'),
+  W(7, 'Las personas con discapacidad', 'Personnes en situation de handicap', { altEs: ['Personas con discapacidad'], altFr: ['Personne en situation de handicap'] }),
+  W(8, 'Salir del armario', 'Faire son coming out'),
+  W(9, 'La convivencia', 'Le vivre-ensemble', { altFr: ['Le vivre ensemble'] }),
+  W(10, 'Enfrentar', 'Affronter'),
+  W(11, 'Superar', 'Dépasser, surmonter', { altFr: ['Dépasser', 'Surmonter'] }),
+  W(12, 'La ciudadanía', 'La citoyenneté'),
+  W(13, 'La apertura mental', 'L’ouverture d’esprit'),
+  W(14, 'Sentirse integrado/a', 'Se sentir intégré.e', { altEs: ['Sentirse integrado', 'Sentirse integrada'], altFr: ['Se sentir intégré', 'Se sentir intégrée'] }),
+  W(15, 'El reconocimiento social', 'La reconnaissance sociale'),
+  W(16, 'Una silla de ruedas', 'Un fauteuil roulant'),
+  W(17, 'La identidad', 'L’identité'),
+  W(18, 'La diversidad', 'La diversité'),
+  W(19, 'La sensibilización', 'La sensibilisation'),
+  W(20, 'Un estereotipo', 'Un stéréotype'),
+  W(21, 'La discriminación', 'La discrimination'),
+  W(22, 'Las desigualdades', 'Les inégalités'),
+  W(23, 'Luchar contra/por', 'Lutter contre/pour', { altEs: ['Luchar contra', 'Luchar por'], altFr: ['Lutter contre', 'Lutter pour'] }),
+  W(24, 'Visibilizar', 'Visibiliser'),
+  W(25, 'Sentirse identificado', 'S’identifier', { altEs: ['Sentirse identificada'] }),
+  W(26, 'Denunciar', 'Dénoncer'),
+  W(27, 'Estigmatizar', 'Stigmatiser'),
+  W(28, 'Un referente', 'Un référent'),
+  W(29, 'La lengua de signos', 'Le langage des signes', { altFr: ['La langue des signes'] }),
+  W(30, 'La autonomía', 'L’autonomie'),
+  W(31, 'Juzgar', 'Juger'),
+  W(32, 'La barrera', 'La barrière'),
+  W(33, 'El autismo', 'L’autisme'),
+  W(34, 'La xenofobia', 'La xénophobie'),
+  W(35, 'La LGTBifobia', 'La LGBTphobie', { altEs: ['La LGBTifobia'] })
+];
+
+/* Unités de 4 à 6 mots : 1–16 = mots difficiles (1 pt), 17–35 = mots faciles (0,5 pt) */
+const UNITS = [
+  [1, 2, 3, 4, 5],
+  [6, 7, 8, 9, 10],
+  [11, 12, 13, 14, 15, 16],
+  [17, 18, 19, 20, 21],
+  [22, 23, 24, 25, 26],
+  [27, 28, 29, 30, 31],
+  [32, 33, 34, 35]
+];
+
+/* ---------- État (sauvegardé localement) ---------- */
+const KEY = 'desafio-memoria-diversite-v1';
+const LNAME = { es: 'espagnol', fr: 'français' };
+
+function loadState() {
+  const base = { dir: 'es-fr', done: { 'es-fr': {}, 'fr-es': {} } };
+  try {
+    const d = JSON.parse(localStorage.getItem(KEY) || 'null');
+    if (d && (d.dir === 'es-fr' || d.dir === 'fr-es')) base.dir = d.dir;
+    if (d && d.done) {
+      if (d.done['es-fr']) base.done['es-fr'] = d.done['es-fr'];
+      if (d.done['fr-es']) base.done['fr-es'] = d.done['fr-es'];
+    }
+  } catch (e) { /* stockage indisponible : progression en mémoire seulement */ }
+  return base;
+}
+function saveState() {
+  try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ignore */ }
+}
+
+let S = loadState();
+let L = null; // leçon en cours
+
+/* ---------- Utilitaires ---------- */
+const $ = sel => document.querySelector(sel);
+const app = $('#app');
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmt = n => String(n).replace('.', ',');
+const wordById = id => WORDS.find(w => w.id === id);
+const langs = () => S.dir.split('-'); // [langue du prompt, langue de réponse]
+const textOf = (w, lng) => (lng === 'es' ? w.es : w.fr);
+const altsOf = (w, lng) => (lng === 'es' ? [w.es].concat(w.altEs) : [w.fr].concat(w.altFr));
+const done = () => S.done[S.dir];
+const score = () => WORDS.reduce((s, w) => s + (done()[w.id] ? w.pts : 0), 0);
+const TOTAL = WORDS.reduce((s, w) => s + w.pts, 0);
+const unitComplete = ids => ids.every(id => done()[id]);
+const unitUnlocked = i => i === 0 || unitComplete(UNITS[i - 1]);
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+
+// Normalisation : sans accents, sans majuscules, sans apostrophes ni ponctuation
+function norm(s) {
+  return s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+    .replace(/[’']/g, '')
+    .replace(/[-\/]/g, ' ')
+    .replace(/[.,;:!?()]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+const ART = /^(el|la|los|las|un|una|le|les|une)\s+/;
+// Retire l'article (y compris l' élidé en français) pour une comparaison tolérante
+function stripArt(s, lng) {
+  let r = s.replace(ART, '');
+  if (lng === 'fr') r = r.replace(/^l(?=[aeiouyh])/, '');
+  return r;
+}
+
+function lev(a, b) {
+  let prev = [];
+  for (let j = 0; j <= b.length; j++) prev[j] = j;
+  for (let i = 1; i <= a.length; i++) {
+    const cur = [i];
+    for (let j = 1; j <= b.length; j++) {
+      cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    }
+    prev = cur;
+  }
+  return prev[b.length];
+}
+
+// Vérifie une réponse tapée : exacte, sans article, ou avec une petite faute de frappe
+function judge(input, w, lng) {
+  const n = norm(input);
+  const cands = altsOf(w, lng);
+  if (!n) return { ok: false, answer: cands[0] };
+  for (const c of cands) if (norm(c) === n) return { ok: true, answer: c };
+  for (const c of cands) {
+    if (stripArt(norm(c), lng) === stripArt(n, lng)) return { ok: true, article: true, answer: c };
+  }
+  for (const c of cands) {
+    const sc = stripArt(norm(c), lng), sn = stripArt(n, lng);
+    const tol = sc.length >= 6 ? 1 : 0;
+    if (tol && lev(sc, sn) <= tol) return { ok: true, typo: true, answer: c };
+  }
+  return { ok: false, answer: cands[0] };
+}
+
+/* ---------- Affichage ---------- */
+function renderScore() {
+  $('#score').textContent = '★ ' + fmt(score()) + ' / ' + fmt(TOTAL) + ' pt';
+}
+
+function renderDirs() {
+  const opts = [['es-fr', 'Espagnol → Français'], ['fr-es', 'Français → Espagnol']];
+  $('#dirs').innerHTML = opts.map(o =>
+    '<button class="seg ' + (S.dir === o[0] ? 'on' : '') + '" data-act="dir" data-dir="' + o[0] + '">' + o[1] + '</button>'
+  ).join('');
+}
+
+function unitCard(i) {
+  const ids = UNITS[i];
+  const unlocked = unitUnlocked(i);
+  const cnt = ids.filter(id => done()[id]).length;
+  const complete = cnt === ids.length;
+  const pts = ids.reduce((s, id) => s + wordById(id).pts, 0);
+  const from = langs()[0];
+  const preview = ids.slice(0, 3).map(id => textOf(wordById(id), from)).join(' · ') + ' …';
+  return '<button class="unit ' + (complete ? 'done' : '') + ' ' + (unlocked ? '' : 'locked') + '" data-act="unit" data-unit="' + i + '" ' + (unlocked ? '' : 'disabled') + '>' +
+    '<div class="num">' + (complete ? '✓' : (unlocked ? i + 1 : '🔒')) + '</div>' +
+    '<div class="info">' +
+      '<div class="t"><span>Unité ' + (i + 1) + '</span><span class="pts">' + fmt(pts) + ' pt</span></div>' +
+      '<div class="sub">' + cnt + '/' + ids.length + ' mots maîtrisés</div>' +
+      '<div class="preview">' + esc(preview) + '</div>' +
+      '<div class="mini"><div style="width:' + (100 * cnt / ids.length) + '%"></div></div>' +
+    '</div></button>';
+}
+
+function renderHome() {
+  const masteredCount = WORDS.filter(w => done()[w.id]).length;
+  app.innerHTML =
+    '<h2 class="sec">Mots difficiles · 1 pt</h2>' +
+    [0, 1, 2].map(unitCard).join('') +
+    '<h2 class="sec">Mots faciles · 0,5 pt</h2>' +
+    [3, 4, 5, 6].map(unitCard).join('') +
+    '<button class="btn wide" data-act="review" ' + (masteredCount ? '' : 'disabled') + '>Réviser les mots maîtrisés (' + masteredCount + ')</button>' +
+    '<p class="reset"><button class="link" data-act="reset">Réinitialiser la progression</button></p>';
+}
+
+function renderLesson() {
+  const ex = L.queue[0];
+  const w = wordById(ex.id);
+  const from = langs()[0], to = langs()[1];
+  const pct = Math.round(100 * L.correct / L.total);
+  const fb = L.phase === 'feedback' ? L.last : null;
+  let body;
+
+  if (ex.type === 'qcm') {
+    const correct = textOf(w, to);
+    if (!ex.opts) {
+      const others = shuffle(WORDS.filter(x => x.id !== w.id).map(x => textOf(x, to))).slice(0, 3);
+      ex.opts = shuffle([correct].concat(others));
+    }
+    body = '<p class="label">Choisis la traduction en ' + LNAME[to] + '</p>' +
+      '<div class="prompt">' + esc(textOf(w, from)) + '</div>' +
+      '<div class="opts">' + ex.opts.map(o => {
+        let c = '';
+        if (fb) {
+          if (o === correct) c = 'right';
+          else if (o === fb.choice && !fb.ok) c = 'wrong';
+        }
+        return '<button class="opt ' + c + '" data-act="opt" data-val="' + esc(o) + '" ' + (fb ? 'disabled' : '') + '>' + esc(o) + '</button>';
+      }).join('') + '</div>';
+  } else {
+    body = '<p class="label">Traduis en ' + LNAME[to] + '</p>' +
+      '<div class="prompt">' + esc(textOf(w, from)) + '</div>' +
+      '<input id="ans" class="ans ' + (fb ? (fb.ok ? 'right' : 'wrong') : '') + '" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Ta réponse…" value="' + esc(fb ? fb.input : '') + '" ' + (fb ? 'disabled' : '') + '>';
+  }
+
+  let foot;
+  if (fb) {
+    foot = '<div class="foot ' + (fb.ok ? 'good' : 'bad') + '"><div class="msg">' + esc(fb.msg) + '</div>' +
+      '<button class="btn" id="cont" data-act="next">Continuer</button></div>';
+  } else if (ex.type === 'type') {
+    foot = '<div class="foot"><div class="msg muted"></div><button class="btn" id="check" data-act="check" disabled>Vérifier</button></div>';
+  } else {
+    foot = '<div class="foot"><div class="msg muted">Choisis une réponse</div></div>';
+  }
+
+  app.innerHTML =
+    '<div class="lesson-top"><button class="x" data-act="home" aria-label="Quitter">✕</button>' +
+      '<div class="bar"><div style="width:' + pct + '%"></div></div></div>' +
+    '<section class="card">' + body + '</section>' + foot;
+
+  const inp = $('#ans');
+  if (inp && !fb) {
+    inp.focus();
+    inp.addEventListener('input', () => { $('#check').disabled = !norm(inp.value); });
+  }
+  if (fb) $('#cont').focus();
+}
+
+function renderFinish() {
+  const gained = L.gained.reduce((a, b) => a + b, 0);
+  const complete = L.mode === 'unit' && unitComplete(L.ids);
+  const stars = L.mistakes === 0 ? 3 : (L.mistakes <= 2 ? 2 : 1);
+  const title = L.mode === 'review' ? 'Révision terminée' : (complete ? 'Unité terminée !' : 'Leçon terminée');
+  app.innerHTML =
+    '<section class="card finish">' +
+      '<div class="trophy">' + '★'.repeat(stars) + '☆'.repeat(3 - stars) + '</div>' +
+      '<h2>' + title + '</h2>' +
+      '<p class="big">+' + fmt(gained) + ' pt</p>' +
+      '<p class="muted">' + L.mistakes + ' erreur' + (L.mistakes > 1 ? 's' : '') + '</p>' +
+      '<div class="row">' +
+        '<button class="btn ghost" data-act="restart">Recommencer</button>' +
+        '<button class="btn" data-act="home">Continuer</button>' +
+      '</div>' +
+    '</section>';
+}
+
+function render() {
+  renderScore();
+  $('#dirs').style.display = L ? 'none' : 'flex';
+  renderDirs();
+  if (!L) renderHome();
+  else if (L.phase === 'finish') renderFinish();
+  else renderLesson();
+}
+
+/* ---------- Moteur de leçon ---------- */
+// mode 'unit' : fait gagner les points ; mode 'review' : révision sans points
+function startLesson(ids, mode) {
+  const qcm = shuffle(ids).map(id => ({ id: id, type: 'qcm' }));
+  const typ = shuffle(ids).map(id => ({ id: id, type: 'type' }));
+  L = {
+    ids: ids, mode: mode,
+    queue: qcm.concat(typ),
+    total: qcm.length + typ.length,
+    correct: 0, mistakes: 0,
+    seen: {}, gained: [],
+    phase: 'answer', last: null
+  };
+  render();
+}
+
+function markSeen(id, type) {
+  const s = (L.seen[id] = L.seen[id] || {});
+  s[type] = true;
+  if (L.mode === 'unit' && s.qcm && s.type && !done()[id]) {
+    done()[id] = true;
+    saveState();
+    L.gained.push(wordById(id).pts);
+  }
+}
+
+function resolve(r) {
+  const ex = L.queue[0];
+  L.last = r;
+  L.phase = 'feedback';
+  if (r.ok) { L.correct++; markSeen(ex.id, ex.type); }
+  else L.mistakes++;
+  render();
+}
+
+function answerQcm(val) {
+  if (!L || L.phase !== 'answer') return;
+  const ex = L.queue[0];
+  const correct = textOf(wordById(ex.id), langs()[1]);
+  const ok = val === correct;
+  resolve({ ok: ok, choice: val, msg: ok ? 'Correct !' : 'Pas tout à fait. Réponse : ' + correct });
+}
+
+function check() {
+  if (!L || L.phase !== 'answer') return;
+  const inp = $('#ans');
+  if (!inp || !norm(inp.value)) return;
+  const ex = L.queue[0];
+  const res = judge(inp.value, wordById(ex.id), langs()[1]);
+  let msg;
+  if (!res.ok) msg = 'Pas tout à fait. Réponse : ' + res.answer;
+  else if (res.article) msg = 'Correct ! N’oublie pas l’article : ' + res.answer;
+  else if (res.typo) msg = 'Presque ! Attention à l’orthographe : ' + res.answer;
+  else msg = 'Correct !';
+  resolve({ ok: res.ok, msg: msg, input: inp.value });
+}
+
+function next() {
+  const ex = L.queue.shift();
+  if (!L.last.ok) L.queue.push(ex); // on revient dessus plus tard
+  L.last = null;
+  L.phase = L.queue.length === 0 ? 'finish' : 'answer';
+  render();
+}
+
+function resetProgress() {
+  if (confirm('Effacer la progression pour ce sens de traduction ?')) {
+    S.done[S.dir] = {};
+    saveState();
+    render();
+  }
+}
+
+/* ---------- Événements ---------- */
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-act]');
+  if (!el || el.disabled) return;
+  const a = el.dataset.act;
+  if (a === 'dir') { S.dir = el.dataset.dir; saveState(); render(); }
+  else if (a === 'unit') startLesson(UNITS[+el.dataset.unit], 'unit');
+  else if (a === 'review') startLesson(WORDS.filter(w => done()[w.id]).map(w => w.id), 'review');
+  else if (a === 'opt') answerQcm(el.dataset.val);
+  else if (a === 'check') check();
+  else if (a === 'next') next();
+  else if (a === 'restart') startLesson(L.ids, L.mode);
+  else if (a === 'home') { L = null; render(); }
+  else if (a === 'reset') resetProgress();
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter' || !L || L.phase === 'finish' || e.target.tagName === 'BUTTON') return;
+  if (L.phase === 'feedback') next();
+  else if (e.target.id === 'ans') check();
+});
+
+render();
+</script>
+</body>
+</html>
