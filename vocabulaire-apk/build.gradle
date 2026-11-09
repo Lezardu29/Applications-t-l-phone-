@@ -1,0 +1,38 @@
+plugins {
+    id 'com.android.application' version '8.5.2'
+}
+
+android {
+    namespace 'com.vocabulaire.diversite'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'com.vocabulaire.diversite'
+        minSdk 26
+        targetSdk 34
+        versionCode 1
+        versionName '1.0'
+    }
+
+    // Même clé que l'autre app du dépôt : les mises à jour s'installent par-dessus.
+    signingConfigs {
+        debug {
+            storeFile file('../debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
+    }
+
+    // L'interface est le fichier vocabulaire/index.html (une seule source pour le web et l'APK).
+    sourceSets {
+        main {
+            assets.srcDirs = ['../vocabulaire']
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}

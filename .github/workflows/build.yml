@@ -28,3 +28,14 @@ jobs:
         with:
           name: FiltreNotifs-apk
           path: build/outputs/apk/debug/*.apk
+
+      - name: Compiler l'APK Desafío de memoria
+        run: |
+          cd vocabulaire-apk
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+          gradle assembleDebug
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: VocabulaireDiversite-apk
+          path: vocabulaire-apk/build/outputs/apk/debug/*.apk
